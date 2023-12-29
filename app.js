@@ -5,8 +5,8 @@ const expresshandle = require('express-handlebars');
 
 const app = express();
 
-app.engine('hbs',expresshandle());
-app.set('view engine','hbs');
+
+app.set('view engine','ejs');
 app.set('views','views');
 
 const admindata = require('./routes/admin');
@@ -19,7 +19,7 @@ app.use('/admin',admindata.routes);
 app.use(shoproutes.routes);
 
 app.use((req,res) => {
-    res.status(404).render('404', {pageTitle: 'Page Not Found'});
+    res.status(404).render('404', {pageTitle: 'Page Not Found' , path : ''} );
 });
 
 app.listen(3000);
