@@ -1,15 +1,14 @@
 const path = require('path');
 const express = require('express');
-const rootdir = require('../util/path');
 const admindata = require('../routes/admin');
+const shopcontroller = require('../controllers/shop');
 
 
 const router123 = express.Router();
 
-router123.get('/',(req,res,next) => {
-    const products = admindata.products;
-    res.render('shop',{prods : products , pageTitle : 'shop flipkart' , path : '/' , hasproduct : products.length > 0});
-    // ..
-});
+router123.get('/', shopcontroller.getindex);
+router123.get('/products',shopcontroller.getproducts);
+router123.get('/cart',shopcontroller.getcart);
+router123.get('/checkout',shopcontroller.getcheckout);
 
-module.exports.routes = router123;
+module.exports = router123;
