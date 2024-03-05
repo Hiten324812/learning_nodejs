@@ -8,7 +8,9 @@ const router123 = express.Router();
 
 router123.get('/', shopcontroller.getindex);
 router123.get('/products',shopcontroller.getproducts);
+router123.get('/products/:productid',shopcontroller.getproduct);
 router123.get('/cart',shopcontroller.getcart);
+router123.post('/cart',shopcontroller.postcart);
 router123.get('/checkout',shopcontroller.getcheckout);
 
 module.exports = router123;
