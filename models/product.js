@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const cart = require('../models/cart');
 
 
 const p = path.join(
@@ -8,7 +9,7 @@ const p = path.join(
     'products.json'
   );
 
-  const getproductsfromfile = cb => {
+ const getproductsfromfile = cb => {
     fs.readFile(p, (err, fileContent) => {
       if (err) {
         cb([]);
@@ -20,7 +21,8 @@ const p = path.join(
   
 module.exports = class Product{
 
-    constructor(title,imageurl,description,price){
+    constructor(id,title,imageurl,description,price){
+    this.id = id;
     this.title = title;
     this.imageurl = imageurl;
     this.description = description;
@@ -28,24 +30,51 @@ module.exports = class Product{
     }
 
     save(){
-        this.id = Math.random().toString();
-     
-       console.log(p);
 
-       fs.readFile(p, (err,filecontent) => {
-
-        let products = [];
-
-        if (!err){
-          products = JSON.parse(filecontent);
+       getproductsfromfile( products => {
+            
+        if (this.id)
+        {
+           const existingproduct = products.findIndex( prod => prod.id === this.id );
+           
+           products[existingproduct] = this;
+           
         }
 
-        products.push(this);
+        else{
+
+          this.id = Math.random().toString();
+     
+           products.push(this);
+          
+        }
 
         fs.writeFile(p,JSON.stringify(products), (err) => {
-             console.log(err);
-        });
+          console.log(err);
        });
+
+      
+
+       });
+       
+       
+       
+    }
+
+    static deletebyid(id)
+    {
+        getproductsfromfile ( products => {
+      
+           const product = products.find( prod => prod.id === id);
+           const prodindex = products.filter(prod => prod.id !== id );
+
+            fs.writeFile( p , JSON.stringify(prodindex) , (err) => {
+                if(!err)
+                {
+                  cart.deleteproduct(id,product.price);
+                }
+            })
+        });
     }
 
     static fetchall(cb){
