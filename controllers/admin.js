@@ -20,32 +20,49 @@ exports.getaddproduct = (req,res,next) => {
        res.redirect('/');
     }
 
-    Product.findbyid(productid, product => {
-        
+    Product.findByPk(productid)
+    .then( product => {
         if ( !product )
         {
             res.redirect('/');
         }
-
        
-        res.render('admin/edit-product',{ pageTitle : 'edit-product html' , path : '/admin/edit-product' , editing : editmode , product : product } )
-    });
+        res.render('admin/edit-product',{ pageTitle : 'edit-product html' , path : '/admin/edit-product' , editing : editmode , product : product} )
+    })
+    .catch( err => console.log(err) );
      // ..
  };
 
 exports.postaddproduct = (req,res,next) =>{
-    const product = new Product(null,req.body.title,req.body.imageurl,req.body.description,req.body.price);
-    product.save();
-    return res.redirect('/'); 
+
+    req.user.createProduct({
+        title : req.body.title,
+        price : req.body.price,
+        description : req.body.description,
+        imageurl : req.body.imageurl,
+        userId : req.user.id
+    })
+    .then( result => {
+        console.log(result);
+    })
+    .catch(err => console.log(err));
+
     };
 
 exports.posteditproduct = (req,res,next) => {
      
     const prodid = req.body.productid;
 
-    const updateproduct = new Product(prodid,req.body.title,req.body.imageurl,req.body.description,req.body.price);
-
-    updateproduct.save();
+    Product.update({
+        title : req.body.title,
+        price : req.body.price,
+        imageurl : req.body.imageurl ,
+        description : req.body.description
+    },{
+        where : {
+            id : prodid
+        }
+    })
       
     res.redirect('/admin/products');
     
@@ -55,19 +72,25 @@ exports.deleteproduct = (req,res,next) => {
 
     const productid = req.body.prodid;
 
-    Product.deletebyid(productid);
+    Product.destroy({
+        where : {
+            id : productid
+        }
+    });
 
     res.redirect('/admin/products');
     
 }
 
 exports.getproducts = (req,res,next) => {
-    Product.fetchall( (products) => {
+    Product.findAll()
+    .then( products => {
         res.render('admin/product-list-admin',{
-         prods : products , 
-         pageTitle : 'admin product list' , 
-         path : '/admin/products' 
-        });
-    });
+            prods : products , 
+            pageTitle : 'admin product list' , 
+            path : '/admin/products' 
+           });
+    })
+    .catch( err => console.loglog(err));
 }
 
