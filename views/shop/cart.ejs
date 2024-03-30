@@ -10,11 +10,16 @@
 
 <% if ( products.length > 0 ) { %>
 
+ <div style="display : flex; justify-content: center ;"> <p style="font-size : x-large;"> Total billing :  <%= total_bill %> </p> </div>
+
  <div style="display : flex;"> 
+
+
 
  <% for (p of products) { %>
   
     <div style="display: flex; justify-content: center; width: 100%;">
+
   
        <article class="card product-item">
                 <header class="card__header">
@@ -26,6 +31,8 @@
                 <div class="card__content">
                     <h2 class="product__price">$<%= p.product.price %></h2>
                     <p class="product__description"> <%= p.product.description %></p>
+
+                   <h2 class="product__price">Quantity :   (<%= p.qty %>) </h2>
                  
                   <form action="/cart-delete-item" method="POST">
 

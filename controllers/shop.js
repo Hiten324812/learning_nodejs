@@ -4,37 +4,46 @@ const process = require('process');
 const Cart = require('../models/cart');
 
 exports.getproducts = (req,res,next) => {
-    Product.fetchall( (products) => {
+    Product.findAll()
+    .then( rows => {
         res.render('shop/product-list',{
-         prods : products , 
-         pageTitle : 'all products ' , 
-          
-         path : '/products' 
-        });
-    });
+            prods : rows , 
+            pageTitle : 'all products ' ,    
+            path : '/products' 
+           });
+    })
+    .catch( err => console.log(err));
   
-    // ..
+
 };
 
 exports.getproduct = (req,res,next) =>{
 
     const pid = req.params.productid;
-    Product.findbyid(pid, product => {
-        res.render('shop/product-detail',{ product : product ,pageTitle : product.title , path : '/products'});
+    Product.findAll({
+        where : {
+            id : pid
+        }
     })
+    .then( (product) => {
+        res.render('shop/product-detail',{ product : product[0] ,pageTitle : product[0].title , path : '/products'});
+    })
+    .catch( err => console.log(err));
 
 
 };
 
 exports.getindex = (req,res,next) => {
 
-    Product.fetchall( (products) => {
+    Product.findAll()
+     .then( rows => {
         res.render('shop/index',{
-         prods : products , 
-         pageTitle : 'shop' , 
-         path : '/' 
-        });
-    });
+            prods : rows , 
+            pageTitle : 'shop' , 
+            path : '/' 
+           });
+     })
+     .catch( err => console.log(err) );
 
 };
 
@@ -55,12 +64,15 @@ exports.getcart = (req,res,next) =>{
                     cartarray.push({ product : prod ,  qty : cartproduct.qty });
                 }
             }
+
+            const total_sum = carts.totalprice;
             
 
             res.render('shop/cart',{
                 path : '/cart' ,
                 pageTitle : 'Your cart details',
-                products : cartarray
+                products : cartarray,
+                total_bill : total_sum
               });
 
         });
