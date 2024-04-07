@@ -1,0 +1,62 @@
+<%- include('../include/head.ejs')%>
+
+</head>
+
+<body>
+
+<%- include('../include/navigation.ejs')%>
+
+<main>
+
+
+
+ <% if (orders.length > 0) {  %>
+
+   
+   <div style="display: grid;">
+
+    <% for (let ord of orders) { %>
+
+
+    <div style="border-style : solid; margin-bottom : 20px ;">
+    
+     
+      <p> order id -  <%= ord._id %>  </p>
+
+    <% for (let list of ord.cart) { %>
+
+     <div style="display: grid;">
+      
+     <p> <%= list.title %> </p>
+     <p> price -  <%= list.price %> </p>
+     <p> title -  <%= list.description %> </p>
+     <p> Quantity -  <%= list.qty %> </p>
+
+       <img src="<%= list.imageurl %>" >
+
+       </div>
+
+      <% } %>
+
+
+     </div>
+  
+
+
+   <% } %>
+
+   </div>
+
+   
+   
+
+ <% } else { %>
+
+ <h1> not anything ordered. </h1>
+
+ <% } %>
+
+
+</main>
+
+<%- include('../include/end.ejs')%>

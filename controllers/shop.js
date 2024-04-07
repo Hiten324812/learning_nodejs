@@ -2,9 +2,10 @@
 const Product = require('../models/product');
 const process = require('process');
 const Cart = require('../models/cart');
+const exp = require('constants');
 
 exports.getproducts = (req,res,next) => {
-    Product.findAll()
+    Product.fetchall()
     .then( rows => {
         res.render('shop/product-list',{
             prods : rows , 
@@ -20,13 +21,10 @@ exports.getproducts = (req,res,next) => {
 exports.getproduct = (req,res,next) =>{
 
     const pid = req.params.productid;
-    Product.findAll({
-        where : {
-            id : pid
-        }
-    })
+    Product.findbyid(pid)
     .then( (product) => {
-        res.render('shop/product-detail',{ product : product[0] ,pageTitle : product[0].title , path : '/products'});
+        console.log(product);
+        res.render('shop/product-detail',{ product : product ,pageTitle : product.title , path : '/products'});
     })
     .catch( err => console.log(err));
 
@@ -35,7 +33,7 @@ exports.getproduct = (req,res,next) =>{
 
 exports.getindex = (req,res,next) => {
 
-    Product.findAll()
+    Product.fetchall()
      .then( rows => {
         res.render('shop/index',{
             prods : rows , 
@@ -49,61 +47,86 @@ exports.getindex = (req,res,next) => {
 
 exports.getcart = (req,res,next) =>{
 
-    Cart.getcart( carts => {
+
+    let total_sum = 0 ;
      
-        Product.fetchall( products => {
+    req.user.getCart()
+    .then( result => {
 
-            const cartarray = [];
+     
+      result.forEach(element => {
         
-            for (const prod of products )
-            {
-               const cartproduct = carts.products.find( pr => pr.id === prod.id)
-               
-               if( cartproduct )
-                {
-                    cartarray.push({ product : prod ,  qty : cartproduct.qty });
-                }
-            }
+        total_sum = total_sum + (element.price)*(element.qty);
 
-            const total_sum = carts.totalprice;
-            
+      });
 
-            res.render('shop/cart',{
-                path : '/cart' ,
-                pageTitle : 'Your cart details',
-                products : cartarray,
-                total_bill : total_sum
-              });
-
-        });
-
-    });
+      res.render('shop/cart',{
+        path : '/cart' ,
+        pageTitle : 'Your cart details',
+        products : result,
+        total_bill : total_sum
+      });
+          
+    })   
+    .catch( err => {
+      console.log(err);
+    })
     
 };
 
 exports.postcart = (req,res,next) =>{
   const prodid = req.body.productid;
-   Product.findbyid(prodid, product => {
-      Cart.addproduct(prodid,product.price);
-   });
-  res.redirect('/cart');
+
+  Product.findbyid(prodid)
+  .then( product => {
+     return req.user.addtocart(product);
+  })
+  .then( result => {
+    console.log(result);
+    res.redirect('/cart');
+  })
+  .catch ( err => console.log( err));
 };
 
 exports.deletecartitem = (req,res,next) => {
 
      const prodid = req.body.prid;
-     Product.findbyid(prodid , product => {
-        Cart.deleteproduct(prodid , product.price);
-        res.redirect('/cart');
 
+     req.user.deletecart(prodid)
+     .then( (result) => {
+      res.redirect('/cart');
      })
-
+     .catch( err => {
+      console.log(err);
+     })
+    
 
 };
 
-exports.getcheckout = (req,res,next) => {
-    res.render('shop/checkout',{
-       path : '/checkout',
-       pageTitle : 'Checkout' 
-    });
+exports.getorder = (req,res,next) => {
+ 
+  req.user.addorder().then( result => {
+    res.redirect('/orders');
+  })
+  .catch( err => {
+    console.log(err);
+  })
+
+};
+
+exports.gotorder = ( req,res,next ) =>{
+   
+
+  req.user.showorders()
+  .then( result => {
+
+    res.render('shop/orders' , { path : '/orders' , pageTitle : 'your orders' , orders : result } );
+
+  })
+  .catch( err => {
+    console.log(err);
+  })
+
+  
 }
+
