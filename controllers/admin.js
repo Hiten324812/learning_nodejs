@@ -1,5 +1,4 @@
 
-const { mongo } = require('mongoose');
 const Product = require('../models/product');
 
 exports.getaddproduct = (req,res,next) => {
@@ -21,7 +20,7 @@ exports.getaddproduct = (req,res,next) => {
        res.redirect('/');
     }
 
-    Product.findbyid(productid)
+    Product.findById(productid)
     .then( product => {
         if ( !product )
         {
@@ -44,9 +43,16 @@ exports.postaddproduct = (req,res,next) =>{
     //     imageurl : req.body.imageurl,
     //     userId : req.user.id
     // })
-    const product = new Product(req.body.title,req.body.price,req.body.description,req.body.imageurl,null,req.user._id);
+    const product = new Product({
+        title : req.body.title ,
+        price : req.body.price,
+        description : req.body.description,
+        imageurl : req.body.imageurl,
+        userid : req.user
+    });
+
     product.save()
-    .then( () => {
+    .then( (result) => {
         console.log('created products');
         res.redirect('/admin/products');
     })
@@ -58,12 +64,18 @@ exports.posteditproduct = (req,res,next) => {
      
     const prodid = req.body.productid;
     
-    const product = new Product(req.body.title,req.body.price,req.body.description,req.body.imageurl,new mongo.ObjectId(prodid));
+    
+    Product.findById(prodid).then( product => {
 
-    product.save()
+        product.title = req.body.title;
+        product.price = req.body.price;
+        product.description = req.body.description;
+        product.imageurl = req.body.imageurl;
+        
+        return product.save();
+    })
     .then( (result) => {
         console.log('updated products !!!');
-        console.log(result);
     })
     .catch ( err => console.log(err) );
       
@@ -75,7 +87,7 @@ exports.deleteproduct = (req,res,next) => {
 
     const productid = req.body.prodid;
 
-    Product.deletebyid(productid)
+    Product.findByIdAndDelete(productid)
     .then( result => {
         console.log('delete done !!!');
         console.log(result);
@@ -89,14 +101,15 @@ exports.deleteproduct = (req,res,next) => {
 }
 
 exports.getproducts = (req,res,next) => {
-    Product.fetchall()
+    Product.find()
     .then( products => {
+        console.log(products);
         res.render('admin/product-list-admin',{
             prods : products , 
             pageTitle : 'admin product list' , 
             path : '/admin/products' 
            });
     })
-    .catch( err => console.loglog(err));
+    .catch( err => console.log(err));
 }
 

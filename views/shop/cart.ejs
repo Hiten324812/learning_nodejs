@@ -10,7 +10,7 @@
 
 <% if ( products.length > 0 ) { %>
 
- <div style="display : grid; justify-content: center ;"> <p style="font-size : x-large;"> Total billing :  <%= total_bill %> </p> 
+ <div style="display : grid; justify-content: center ;">
  
  
  <div> <form action="/create-order" method="POST">
@@ -35,20 +35,20 @@
   
        <article class="card product-item">
                 <header class="card__header">
-                    <h1 class="product__title"> <%= p.title %> </h1>
+                    <h1 class="product__title"> <%= p.productid.title %> </h1>
                 </header>
                 <div class="card__image">
-                    <img src="<%= p.imageurl %>">
+                    <img src="<%= p.productid.imageurl %>">
                 </div>
                 <div class="card__content">
-                    <h2 class="product__price">$<%= p.price %></h2>
-                    <p class="product__description"> <%= p.description %></p>
+                    <h2 class="product__price">$<%= p.productid.price %></h2>
+                    <p class="product__description"> <%= p.productid.description %></p>
 
-                   <h2 class="product__price"> Quantity :   (<%= p.qty %>) </h2>
+                   <h2 class="product__price"> Quantity :   (<%= p.quantity %>) </h2>
                  
                   <form action="/cart-delete-item" method="POST">
 
-                  <input type="hidden" name="prid" value="<%= p._id %>">
+                  <input type="hidden" name="prid" value="<%= p.productid._id %>">
                   <button type="submit" class="btn"> Delete </button>
 
                   </form>

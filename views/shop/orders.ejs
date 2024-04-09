@@ -27,12 +27,12 @@
 
      <div style="display: grid;">
       
-     <p> <%= list.title %> </p>
-     <p> price -  <%= list.price %> </p>
-     <p> title -  <%= list.description %> </p>
-     <p> Quantity -  <%= list.qty %> </p>
+     <p> title - <%= list.product.title %> </p>
+     <p> price -  <%= list.product.price %> </p>
+     <p> description -  <%= list.product.description %> </p>
+     <p> Quantity -  <%= list.quantity %> </p>
 
-       <img src="<%= list.imageurl %>" >
+       <img src="<%= list.product.imageurl %>" >
 
        </div>
 
