@@ -3,16 +3,20 @@ const Product = require('../models/product');
 
 exports.getaddproduct = (req,res,next) => {
   
-    res.render('admin/edit-product',{ pageTitle : 'add-product html' , path : '/admin/add-product' , editing : false } );
-     // ..
+   res.render('admin/edit-product',{ pageTitle : 'add-product html' , path : '/admin/add-product' , editing : false , isloggedin : req.isloggedin } );
+ 
  };
 
 
  exports.geteditproduct = (req,res,next) => {
   
+  
+
     const editmode = req.query.edit;
 
     const productid = req.params.productid;
+
+
 
 
     if ( !editmode )
@@ -28,7 +32,7 @@ exports.getaddproduct = (req,res,next) => {
         }
 
        
-        res.render('admin/edit-product',{ pageTitle : 'edit-product html' , path : '/admin/edit-product' , editing : editmode , product : product} )
+        res.render('admin/edit-product',{ pageTitle : 'edit-product html' , path : '/admin/edit-product' , editing : editmode , product : product , isloggedin : req.session.isloggedin } )
     })
     .catch( err => console.log(err) );
      // ..
@@ -90,7 +94,6 @@ exports.deleteproduct = (req,res,next) => {
     Product.findByIdAndDelete(productid)
     .then( result => {
         console.log('delete done !!!');
-        console.log(result);
     })
     .catch( err => {
         console.log(err);
@@ -103,11 +106,11 @@ exports.deleteproduct = (req,res,next) => {
 exports.getproducts = (req,res,next) => {
     Product.find()
     .then( products => {
-        console.log(products);
         res.render('admin/product-list-admin',{
             prods : products , 
             pageTitle : 'admin product list' , 
-            path : '/admin/products' 
+            path : '/admin/products' ,
+            isloggedin : req.session.isloggedin
            });
     })
     .catch( err => console.log(err));

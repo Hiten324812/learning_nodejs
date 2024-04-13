@@ -21,7 +21,8 @@ const productschema = new schema({
    } , 
    userid : {
       type : schema.Types.ObjectId,
-      ref : 'user'
+      ref : 'user',
+      required : true 
    }
 
 });

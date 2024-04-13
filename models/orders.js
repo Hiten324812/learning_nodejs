@@ -16,10 +16,16 @@ const orderschema = new schema({
             }
         }
     ] ,
-    userid : {
-       type : schema.Types.ObjectId ,
-       required : true ,
-       ref : 'user'      
+    user : {
+       email : {
+        type : String,
+        required : true
+       } ,
+       userid : {
+        type : schema.Types.ObjectId,
+        required : true,
+        ref : 'user'
+       }
     }
 })
 

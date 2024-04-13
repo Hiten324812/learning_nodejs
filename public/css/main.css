@@ -30,8 +30,10 @@ form {
 
 .main-header__nav {
   height: 100%;
+  width: 100%;
   display: none;
   align-items: center;
+  justify-content: space-between;
 }
 
 .main-header__item-list {
@@ -205,4 +207,18 @@ img{
   #side-menu-toggle {
     display: none;
   }
+}
+
+.user-message{
+  margin: auto;
+  width: 60%;
+  border: 1px solid #4771fa;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.user-message--error{
+  border-color: red;
+  background: rgb(248, 137, 137);
 }

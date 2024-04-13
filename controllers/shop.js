@@ -8,7 +8,6 @@ const product = require('../models/product');
 const user = require('../models/user');
 
 
-
 exports.getindex = (req,res,next) => {
 
   Product.find()
@@ -17,7 +16,8 @@ exports.getindex = (req,res,next) => {
       res.render('shop/index',{
           prods : rows , 
           pageTitle : 'shop' , 
-          path : '/' 
+          path : '/' ,
+          isloggedin :  req.session.isloggedin,
          });
    })
    .catch( err => console.log(err) );
@@ -30,7 +30,8 @@ exports.getproducts = (req,res,next) => {
         res.render('shop/product-list',{
             prods : rows , 
             pageTitle : 'all products ' ,    
-            path : '/products' 
+            path : '/products' ,
+            isloggedin :  req.session.isloggedin
            });
     })
     .catch( err => console.log(err));
@@ -43,7 +44,7 @@ exports.getproduct = (req,res,next) =>{
     const pid = req.params.productid;
     Product.findById(pid)
     .then( (product) => {
-        res.render('shop/product-detail',{ product : product ,pageTitle : product.title , path : '/products'});
+        res.render('shop/product-detail',{ product : product ,pageTitle : product.title , path : '/products' , isloggedin :  req.session.isloggedin});
     })
     .catch( err => console.log(err));
 
@@ -53,7 +54,7 @@ exports.getproduct = (req,res,next) =>{
 
 exports.getcart = (req,res,next) =>{
 
-     
+
      req.user.populate('cart.productid')
      .then( user => {
     
@@ -62,7 +63,8 @@ exports.getcart = (req,res,next) =>{
         res.render('shop/cart',{
             path : '/cart' ,
             pageTitle : 'Your cart details',
-            products : result
+            products : result,
+            isloggedin :  req.session.isloggedin
           });    
      })
      .catch( err => {
@@ -119,7 +121,10 @@ exports.getorder = (req,res,next) => {
 
 
      const order = new Order({
-        userid : req.user._id,
+        user : {
+          email : req.user.email,
+          userid : req.user
+        } ,
         cart : result 
      });
 
@@ -145,10 +150,9 @@ exports.getorder = (req,res,next) => {
 exports.gotorder = ( req,res,next ) =>{
    
 
-  Order.find({userid : req.user._id})
+  Order.find({ 'user.userid' : req.user._id}).populate('user.userid')
   .then( result => {
-
-    res.render('shop/orders' , { path : '/orders' , pageTitle : 'your orders' , orders : result } );
+    res.render('shop/orders' , { path : '/orders' , pageTitle : 'your orders' , orders : result , isloggedin :  req.session.isloggedin } );
 
   })
   .catch( err => {

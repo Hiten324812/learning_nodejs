@@ -3,14 +3,15 @@ const express = require('express');
 
 
 const admincontroller = require('../controllers/admin');
+const isauth = require('../middleware/is-auth');
 
 const router = express.Router();
 
 
-router.get( '/add-product',admincontroller.getaddproduct); 
+router.get( '/add-product', isauth , admincontroller.getaddproduct); 
 router.get('/products',admincontroller.getproducts);
 router.post('/add-product',admincontroller.postaddproduct);
-router.get('/edit-product/:productid',admincontroller.geteditproduct);
+router.get('/edit-product/:productid', isauth ,admincontroller.geteditproduct);
 router.post('/edit-product',admincontroller.posteditproduct);
 router.post('/delete-product',admincontroller.deleteproduct);
 

@@ -8,14 +8,18 @@
 
 <main>
 
+
+
 <% if ( products.length > 0 ) { %>
+
+
 
  <div style="display : grid; justify-content: center ;">
  
  
  <div> <form action="/create-order" method="POST">
 
-
+    <input type="hidden" name="_csrf" value="<%= csrftoken %>">
     <button type="submit" class="btn"> Order Now </button> 
 
     
@@ -49,6 +53,7 @@
                   <form action="/cart-delete-item" method="POST">
 
                   <input type="hidden" name="prid" value="<%= p.productid._id %>">
+                  <input type="hidden" name="_csrf" value="<%= csrftoken %>">
                   <button type="submit" class="btn"> Delete </button>
 
                   </form>
