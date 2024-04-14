@@ -1,6 +1,16 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+const nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    service : 'gmail',
+    auth : {
+        user : 'hitenmistry354@gmail.com',
+        pass : 'hmhk rifp ajqa vnia'
+    }});
+
+
 exports.getlogin = ( (req,res,next) => {
 
     //  const isloggedin = req.get('cookie')
@@ -106,7 +116,7 @@ exports.postsignup = (req,res,next) => {
 
     const email1 = req.body.email;
     const pass1 = req.body.password;
-    const pass2 = req.body.confirmpassword;
+    // const pass2 = req.body.confirmpassword;
 
     console.log(email1);
 
@@ -114,6 +124,7 @@ exports.postsignup = (req,res,next) => {
     .then( result => {
        if (result)
        { 
+        console.log(result);
         req.flash('error', 'email already exists !!!');
         return res.redirect('/signup');
        }
@@ -123,13 +134,32 @@ exports.postsignup = (req,res,next) => {
     .then( result => {
 
         const user = new User({
-            email : email,
+            email : email1,
             password : result,
             cart : []
            });
     
            return user.save();
+    })
+    .then( result => {
+        var mailoptions = 
+            {
+                from : 'shop-hiten@gmail.com',
+                to : email1,
+                subject : 'signup completed nodejs',
+                html : '<h1> you sucessfully signed up! </h1>'
+             } 
 
+            return transporter.sendMail(mailoptions, function(err,info) {
+              if (err)
+              {
+                console.log(err);
+              }
+              else
+              {
+                console.log('email send : ' + info.response);
+              }
+        })
     })
     .then( result => {
         res.redirect('/login');

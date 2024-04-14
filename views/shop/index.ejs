@@ -8,6 +8,15 @@
 
 <main>
 
+
+  <h1>  products list below :  </h1>
+
+  <hr>
+  <hr>
+  <hr>
+
+  <% if (prods.length > 0 ) { %>
+
   <div style ="display : flex;">
 
 
@@ -38,6 +47,12 @@
 
   </div>
 
+  <% } else { %>
+
+
+  <h1> No products found !!! </h1>
+
+  <% } %>
  
 
 </main>
