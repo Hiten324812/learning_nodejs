@@ -3,7 +3,7 @@ const Product = require('../models/product');
 
 exports.getaddproduct = (req,res,next) => {
   
-   res.render('admin/edit-product',{ pageTitle : 'add-product html' , path : '/admin/add-product' , editing : false , isloggedin : req.isloggedin } );
+   res.render('admin/edit-product',{ pageTitle : 'add-product html' , path : '/admin/add-product' , editing : false , isloggedin : req.session.isloggedin } );
  
  };
 
@@ -69,21 +69,26 @@ exports.posteditproduct = (req,res,next) => {
     const prodid = req.body.productid;
     
     
-    Product.findById(prodid).then( product => {
+    Product.findById(prodid)
+    .then( product => {
+
+        if ( product.userid.toString() !== req.user._id.toString() )
+        {
+            return res.redirect('/');
+        }
 
         product.title = req.body.title;
         product.price = req.body.price;
         product.description = req.body.description;
         product.imageurl = req.body.imageurl;
         
-        return product.save();
-    })
-    .then( (result) => {
-        console.log('updated products !!!');
+        return product.save().then( (result) => {
+            console.log('updated products !!!');
+            res.redirect('/admin/products');
+        });
     })
     .catch ( err => console.log(err) );
       
-    res.redirect('/admin/products');
     
 };
 
@@ -91,20 +96,20 @@ exports.deleteproduct = (req,res,next) => {
 
     const productid = req.body.prodid;
 
-    Product.findByIdAndDelete(productid)
+    Product.deleteOne({ _id : productid , userid : req.user._id })
     .then( result => {
         console.log('delete done !!!');
+        res.redirect('/admin/products');
     })
     .catch( err => {
         console.log(err);
     });
 
-    res.redirect('/admin/products');
     
 }
 
 exports.getproducts = (req,res,next) => {
-    Product.find()
+    Product.find({userid : req.user._id })
     .then( products => {
         res.render('admin/product-list-admin',{
             prods : products , 

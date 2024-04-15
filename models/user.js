@@ -16,7 +16,8 @@ const userschema = new schema({
         type : String,
         required : true 
     } ,
-
+    resetoken : String ,
+    resetokenexpire : Date ,
     cart : [ {
         productid : { type : schema.Types.ObjectId , required : true , ref : 'product' } , quantity : { type : Number , require : true }
     } ]
